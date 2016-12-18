@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>XP Programming</title>
+
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="my.css">
+</head>
+<body>
+
+<div class="settings">
+    <div>
+        <div class="panel panel-primary">
+            <div class="panel-heading">Indstillinger</div>
+            <div class="panel-body">
+                <button class="button1" type="button" onclick="changeToGreen()">Grøn</button>
+                <button class="button2" type="button" onclick="changeToBlue()">Blå</button>
+                <button class="button3" type="button" onclick="changeToRed()">Rød</button>
+                <button class="button4" type="button" onclick="changeToGrey()">Grå</button>
+                <button class="button5" type="button" onclick="changeToBlack()">Sort</button>
+                <select onchange="changeSize(this);" size="11" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false">
+                    <option>xx-small</option>
+                    <option>x-small</option>
+                    <option>small</option>
+                    <option>medium</option>
+                    <option>large</option>
+                    <option>x-large</option>
+                    <option>xx-large</option>
+                </select>
+                <select onchange="myFunction(this);" size="13">
+                    <option>Georgia</option>
+                    <option>Palatino Linotype</option>
+                    <option>Book Antiqua</option>
+                    <option>Times New Roman</option>
+                    <option>Arial</option>
+                    <option>Helvetica</option>
+                    <option>Arial Black</option>
+                    <option>Impact</option>
+                    <option>Lucida Sans Unicode</option>
+                    <option>Tahoma</option>
+                    <option>Verdana</option>
+                    <option>Courier New</option>
+                    <option>Lucida Console</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main">
+    <div class="offers">
+        <div class="panel panel-primary">
+            <div class="panel-heading">Her kan du skrive noget</div>
+            <div class="panel-body table-responsive" id="box">
+                <textarea id="text" name="myTextBox" style="width:100%; height: 600px;"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="bootstrap/js/bootstrap.js"></script>
+</body>
+</html>
+
+<script>
+
+    function changeToBlack() {
+        $('#text').css({'color': 'black'});
+    }
+    function changeToRed() {
+        $('#text').css({'color': 'red'});
+    }
+    function changeToGrey() {
+        $('#text').css({'color': 'grey'});
+    }
+    function changeToBlue() {
+        $('#text').css({'color': 'blue'});
+    }
+    function changeToGreen() {
+        $('#text').css({'color': 'green'});
+    }
+    function changeSize(selectTag) {
+        var listValue = selectTag.options[selectTag.selectedIndex].text;
+        document.getElementById("text").style.fontSize = listValue;
+    }
+
+    function myFunction(selectTag) {
+        var listValue = selectTag.options[selectTag.selectedIndex].text;
+        document.getElementById("text").style.fontFamily = listValue;
+    }
+
+    var interval;
+    $(function () {
+        interval = setInterval(read, 100);
+        $("#text").on('input', function(){
+            write();
+        });
+    });
+
+    function read(){
+        $.ajax({
+            method: "GET",
+            url: "/php/read.php",
+            dataType:"json",
+            async: false,
+            success: function(data){
+                $("#text").val(data.text);
+            }
+        });
+    }
+
+    function write(){
+        var text = $("#text").val();
+        $.ajax({
+            method: "GET",
+            url:"php/write.php",
+            data: {
+                text: text
+            },
+            async: false,
+            dataType: "json",
+            success: function(data){
+                if(data){
+                    read();
+                }
+            }
+        });
+    }
+</script>

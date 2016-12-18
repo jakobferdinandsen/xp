@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>XP Programming</title>
+
+        <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+
+    </head>
+    <body>
+        <textarea id="text" name="myTextBox" style="width:100%; height:99.5vh"></textarea>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="bootstrap/js/bootstrap.js"></script>
+    </body>
+</html>
+
+<script>
+    var interval;
+    $(function () {
+        interval = setInterval(read, 100);
+        $("#text").on('input', (function () {
+            console.log("Badumtss");
+            write();
+        }));
+    });
+
+    function read() {
+        $.ajax({
+            method: "GET",
+            url: "/php/read.php",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+                $("#text").val(data.text);
+            }
+        });
+    }
+
+    function write() {
+        var text = $("#text").val();
+        $.ajax({
+            method: "GET",
+            url: "/php/write.php?",
+            data: {
+                text: text
+            },
+            async: false,
+            dataType: "json",
+            success: function (data) {
+                if (data) {
+                }
+            }
+        });
+    }
+</script>

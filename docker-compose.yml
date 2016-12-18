@@ -1,0 +1,8 @@
+nginx:
+  build: conf/
+  ports:
+    - "5000:80"
+    - "5001:443"
+    - "5002:9000"
+  volumes:
+    - ./:/data/www

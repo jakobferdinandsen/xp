@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>XP Programming</title>
+
+        <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+        <script src="ckeditor/ckeditor.js"></script>
+    </head>
+    <body>
+        <textarea id="text" name="myTextBox" style="width:100%; height:100%;"></textarea>
+
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <script src="bootstrap/js/bootstrap.js"></script>
+        <script>CKEDITOR.replace('myTextBox')</script>
+    </body>
+</html>
+
+<script>
+    var interval;
+    var lastText;
+    var bookmarks;
+    var editor = CKEDITOR.instances['text'];
+
+    $(function () {
+        interval = setInterval(read, 500);
+        CKEDITOR.instances['text'].on('change', (function () {
+            write();
+        }));
+
+        CKEDITOR.on('instanceReady',
+                function (evt) {
+                    editor.execCommand('maximize');
+                });
+    });
+
+    function read() {
+        $.ajax({
+            method: "GET",
+            url: "/php/read.php",
+            dataType: "json",
+            async: false,
+            success: function (data) {
+//                if (lastText !== data.text) {
+                var editor = CKEDITOR.instances['text'];
+                storeCursorLocation(editor);
+                editor.document.getBody().setHtml(data.text);
+                restoreCursorLocation(editor);
+                lastText = data.text;
+//                }
+
+            }
+        });
+    }
+
+    function write() {
+        var text = CKEDITOR.instances['text'].document.getBody().getHtml();
+        $.ajax({
+            method: "GET",
+            url: "/php/write.php?",
+            data: {
+                text: text
+            },
+            async: false,
+            dataType: "json"
+        });
+    }
+
+
+    function storeCursorLocation(editor) {
+        bookmark = editor.getSelection().createBookmarks2(true);
+    }
+
+    function restoreCursorLocation(editor) {
+        try {
+            editor.getSelection().selectBookmarks(bookmark);
+        } catch(e){
+            console.log(e);
+        }
+    }
+
+</script>
